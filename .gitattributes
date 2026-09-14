@@ -1,0 +1,4 @@
+# Count Markdown as real repo content in GitHub's language stats,
+# instead of the default "documentation" exclusion that would leave
+# install.sh (Shell) as the only thing counted.
+*.md linguist-detectable=true
