@@ -33,7 +33,16 @@ The collection is being developed progressively:
 2. Agents
 3. Orchestrators and multiple agents
 
-Stage 1 (Skills) ships three samples, deliberately different in shape — read-only, write-capable, and multi-step — so the "one skill, many tools" claim is proven by repetition rather than a single example. Stage 1 reached its initial target of three skills; more skills are still welcome through contributions (see [CONTRIBUTING.md](CONTRIBUTING.md)). Stages 2 and 3 (agents, then orchestration) have not started.
+Stage 1 (Skills) is organised as a grid: the same three shapes — read-only, write-capable, and multi-step chain — applied across a growing set of domains, so the pattern is proven by repetition rather than a single example.
+
+| Domain | Status |
+|---|---|
+| Tech / Software | Done — 3 skills |
+| Product | Done — 3 skills |
+| Content | Planned |
+| Social Media | Planned |
+
+More skills and domains are welcome through contributions (see [CONTRIBUTING.md](CONTRIBUTING.md)). Stages 2 and 3 (agents, then orchestration) have not started.
 
 ## How a skill actually works
 
@@ -64,15 +73,22 @@ flowchart TD
     G --> H[Stop — no fix applied without<br/>separate authorisation]
 ```
 
-## The three skills
+## The skills
 
-| Skill | Shape | What it does |
-|---|---|---|
-| [Root Cause Investigator](skills/root-cause-investigator/SKILL.md) | Read-only, single-pass | Investigates a defect using labelled evidence (observed/reported/inferred/unknown) and stops before remediation. |
-| [Changelog Entry Drafter](skills/changelog-entry-drafter/SKILL.md) | Write-capable, bounded to one file | Drafts a dated `CHANGELOG.md` entry from commits or a diff, shows it before writing, and writes only with explicit approval (one-time by default, session-scoped only if the user grants that in their own words). |
-| [Pre-Merge Readiness Checklist](skills/pre-merge-readiness-checklist/SKILL.md) | Read-only, multi-step chain | Runs six fixed checks (tests, docs, debug leftovers, commit convention, secrets, sensitive files) and reports pass/fail/could-not-determine per check — never a false "ready." |
+Every skill follows one of the same three shapes, whichever domain it's applied to — that repetition is deliberate: learn the pattern once from any one skill, and the rest read as variations, not new concepts.
 
-All three are instruction-only Markdown. None contain scripts, dependencies, credentials, or automatic tool permissions — enforcement of what they're allowed to do comes from the host tool's own permission model, not from the skill file itself.
+| Domain | Skill | Shape | What it does |
+|---|---|---|---|
+| Tech / Software | [Root Cause Investigator](skills/root-cause-investigator/SKILL.md) | Read-only, single-pass | Investigates a defect using labelled evidence (observed/reported/inferred/unknown) and stops before remediation. |
+| Tech / Software | [Changelog Entry Drafter](skills/changelog-entry-drafter/SKILL.md) | Write-capable, bounded to one file | Drafts a dated `CHANGELOG.md` entry from commits or a diff, shows it before writing, and writes only with explicit approval. |
+| Tech / Software | [Pre-Merge Readiness Checklist](skills/pre-merge-readiness-checklist/SKILL.md) | Read-only, multi-step chain | Runs six fixed checks (tests, docs, debug leftovers, commit convention, secrets, sensitive files) and reports pass/fail/could-not-determine — never a false "ready." |
+| Product | [Requirements Gap Investigator](skills/requirements-gap-investigator/SKILL.md) | Read-only, single-pass | Surfaces unstated assumptions and conflicting stakeholder signals in a vague feature ask, labelled stated/reported/inferred/unknown, and stops before drafting requirements. |
+| Product | [PRD Draft Assistant](skills/prd-draft-assistant/SKILL.md) | Write-capable, bounded to one file | Drafts a PRD section from confirmed notes or a brief, shows it before writing, and writes only with explicit approval. |
+| Product | [Feature Launch Readiness Checklist](skills/feature-launch-readiness-checklist/SKILL.md) | Read-only, multi-step chain | Runs six fixed checks (rollback plan, rollout control, success metric, docs, support briefing, known blockers) and reports pass/fail/could-not-determine — never a launch decision. |
+
+All skills are instruction-only Markdown. None contain scripts, dependencies, credentials, or automatic tool permissions — enforcement of what they're allowed to do comes from the host tool's own permission model, not from the skill file itself.
+
+Content and Social Media domains are planned next; see [About this collection](#about-this-collection).
 
 ## See it in action
 
@@ -111,30 +127,48 @@ mapping and confirm which property it reads. Not changed without
 separate authorisation.
 ```
 
-Notice what it does *not* do: no file was edited, no fix was proposed as fact, and every claim is traceable back to something reported or observed. That discipline — stop, label your evidence, don't guess — is the throughline across all three skills, just applied differently depending on whether the skill is read-only or write-capable.
+Notice what it does *not* do: no file was edited, no fix was proposed as fact, and every claim is traceable back to something reported or observed. That discipline — stop, label your evidence, don't guess — is the throughline across every skill in this repo, just applied differently depending on whether the skill is read-only, write-capable, or a multi-step chain.
 
 ## Repository structure
 
 ```text
 skills/
-├── root-cause-investigator/
+├── root-cause-investigator/            (Tech / Software — read-only)
 │   ├── SKILL.md
 │   ├── examples/
 │   │   └── ui-api-field-mismatch.md
 │   └── references/
 │       └── investigation-report.md
-├── changelog-entry-drafter/
+├── changelog-entry-drafter/            (Tech / Software — write-capable)
 │   ├── SKILL.md
 │   ├── examples/
 │   │   └── version-bump-example.md
 │   └── references/
 │       └── changelog-entry-format.md
-└── pre-merge-readiness-checklist/
+├── pre-merge-readiness-checklist/      (Tech / Software — multi-step chain)
+│   ├── SKILL.md
+│   ├── examples/
+│   │   └── missing-tests-example.md
+│   └── references/
+│       └── checklist-report-format.md
+├── requirements-gap-investigator/      (Product — read-only)
+│   ├── SKILL.md
+│   ├── examples/
+│   │   └── vague-export-request.md
+│   └── references/
+│       └── gap-report-format.md
+├── prd-draft-assistant/                (Product — write-capable)
+│   ├── SKILL.md
+│   ├── examples/
+│   │   └── export-feature-prd.md
+│   └── references/
+│       └── prd-section-format.md
+└── feature-launch-readiness-checklist/ (Product — multi-step chain)
     ├── SKILL.md
     ├── examples/
-    │   └── missing-tests-example.md
+    │   └── export-feature-launch.md
     └── references/
-        └── checklist-report-format.md
+        └── launch-checklist-format.md
 install.sh
 ```
 
@@ -191,9 +225,18 @@ Start with the synthetic case for each skill, then try prompts such as:
 **Pre-Merge Readiness Checklist** — [missing-tests-example.md](skills/pre-merge-readiness-checklist/examples/missing-tests-example.md)
 - `Run the Pre-Merge Readiness Checklist on my current branch diff against main.`
 
-A good result should identify what was observed, show the evidence behind the conclusion, and — for the two read-only skills — avoid making changes; for the Changelog Entry Drafter, it should show the draft and get explicit approval before writing.
+**Requirements Gap Investigator** — [vague-export-request.md](skills/requirements-gap-investigator/examples/vague-export-request.md)
+- `Use the Requirements Gap Investigator. Sales asked for "an export button on the reports page." Figure out what's actually needed before we write it up.`
 
-None should activate for a request that's really remediation of an already-known defect, such as `Implement the already-approved change from orders to items`.
+**PRD Draft Assistant** — [export-feature-prd.md](skills/prd-draft-assistant/examples/export-feature-prd.md)
+- `Use the PRD Draft Assistant to draft the Problem Statement and Goals sections of PRD.md from this confirmed brief: ...`
+
+**Feature Launch Readiness Checklist** — [export-feature-launch.md](skills/feature-launch-readiness-checklist/examples/export-feature-launch.md)
+- `Use the Feature Launch Readiness Checklist on the feature we're shipping this week.`
+
+A good result should identify what was observed or stated, show the evidence behind the conclusion, and — for the read-only skills — avoid making changes or decisions; for the two write-capable skills, it should show the draft and get explicit approval before writing.
+
+None should activate for a request that's really remediation or execution of an already-known defect or decision, such as `Implement the already-approved change from orders to items` or `Write the full PRD, we already know exactly what we want`.
 
 ## Troubleshooting
 
