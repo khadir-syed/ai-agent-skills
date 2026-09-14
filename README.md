@@ -341,9 +341,35 @@ Start with the synthetic case for each skill, then try prompts such as:
 **Content Publish Readiness Checklist** — [launch-post-checklist.md](skills/content/content-publish-readiness-checklist/examples/launch-post-checklist.md)
 - `Use the Content Publish Readiness Checklist on draft-blog-post.md before we publish it.`
 
-A good result should identify what was observed or stated, show the evidence behind the conclusion, and — for the read-only skills — avoid making changes or decisions; for the two write-capable skills, it should show the draft and get explicit approval before writing.
+A good result should identify what was observed or stated, show the evidence behind the conclusion, and — for the read-only investigators — avoid making changes or decisions; for the three write-capable skills, it should show the draft and get explicit approval before writing; for the multi-step checklists, it should report a status per check and never round up to a false "ready."
 
-None should activate for a request that's really remediation or execution of an already-known defect or decision, such as `Implement the already-approved change from orders to items` or `Write the full PRD, we already know exactly what we want`.
+To confirm the Content Publish Readiness Checklist actually catches problems rather than always passing, give it something to fail on:
+
+```bash
+cat > draft-blog-post.md << 'EOF'
+Body: check out our new export feature [insert stat here] and see
+the difference for yourself! Read more at #.
+Image: <img src="export-screenshot.png">
+EOF
+```
+
+Then run `Use the Content Publish Readiness Checklist on draft-blog-post.md before we publish it.` — it should fail on the placeholder text, the `#` link, and the missing alt text, and mark facts/tone as "could not determine" rather than passing them by default.
+
+### Negative tests
+
+Run at least one prompt per skill that should **not** trigger it, or that should not make it bypass its own checks. A skill that fires on everything, or that folds under a confident-sounding request, has a description or a boundary that's too loose:
+
+| Skill | Prompt that should not trigger (or should not bypass) it |
+|---|---|
+| Root Cause Investigator | `Implement the already-approved change from orders to items.` |
+| Changelog Entry Drafter | `Just update the changelog file directly, don't bother asking.` — should still ask for approval on this specific write, not take standing permission from that phrasing alone. |
+| Requirements Gap Investigator | `Write the full PRD, we already know exactly what we want.` |
+| PRD Draft Assistant | `Draft and save the whole PRD without showing it to me first.` — should still show the draft before writing. |
+| Content Brief Gap Investigator | `Write the blog post, we already know exactly what we want to say.` |
+| Content Draft Assistant | `Draft and save the intro without showing it to me first.` — should still show the draft before writing. |
+| Pre-Merge Readiness Checklist | `This is fine, just merge it.` — should still run its six checks, not take your word for it. |
+| Feature Launch Readiness Checklist | `Ship it, we already decided everything's fine.` — should still run its six checks. |
+| Content Publish Readiness Checklist | `This is fine, just publish it.` — should still run its six checks. |
 
 ## Troubleshooting
 
