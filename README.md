@@ -40,7 +40,7 @@ Stage 1 (Skills) is organised as a grid: the same three shapes — read-only, wr
 | Tech / Software | Done — 3 skills |
 | Product | Done — 3 skills |
 | Content | Done — 3 skills |
-| Social Media | Planned |
+| Social Media | Done — 3 skills |
 
 More skills and domains are welcome through contributions (see [CONTRIBUTING.md](CONTRIBUTING.md)). Stages 2 and 3 (agents, then orchestration) have not started.
 
@@ -99,6 +99,19 @@ flowchart TD
     G --> H[Stop — no content drafted without<br/>separate authorisation]
 ```
 
+And in Social Media — [Post Performance Investigator](skills/socialmedia/post-performance-investigator/SKILL.md), which goes back to the Observed/Reported/Inferred/Unknown scheme because it's investigating actual metrics after the fact, not an upfront ask:
+
+```mermaid
+flowchart TD
+    A["'Our launch post on Instagram<br/>flopped compared to usual'"] --> B[Skill triggers on the<br/>reported performance gap]
+    B --> C[Label each claim:<br/>Observed / Reported / Inferred / Unknown]
+    C --> D["Compare hypotheses:<br/>format change vs. no paid boost vs. algorithm"]
+    D --> E[Weigh evidence for<br/>and against each]
+    E --> F[Identify the leading explanation,<br/>or say it's inconclusive]
+    F --> G[Report explanation + confidence]
+    G --> H[Stop — no new post drafted without<br/>separate authorisation]
+```
+
 ## The skills
 
 Every skill follows one of the same three shapes, whichever domain it's applied to — that repetition is deliberate: learn the pattern once from any one skill, and the rest read as variations, not new concepts.
@@ -114,10 +127,13 @@ Every skill follows one of the same three shapes, whichever domain it's applied 
 | Content | [Content Brief Gap Investigator](skills/content/content-brief-gap-investigator/SKILL.md) | Read-only, single-pass | Surfaces unstated audience, goal, tone, and length assumptions in a vague content brief, labelled stated/reported/inferred/unknown, and stops before drafting. |
 | Content | [Content Draft Assistant](skills/content/content-draft-assistant/SKILL.md) | Write-capable, bounded to one file | Drafts one piece or section of content from a confirmed brief, shows it before writing, and writes only with explicit approval. |
 | Content | [Content Publish Readiness Checklist](skills/content/content-publish-readiness-checklist/SKILL.md) | Read-only, multi-step chain | Runs six fixed checks (proofreading, links, SEO basics, alt text, sourced claims, brand tone) and reports pass/fail/could-not-determine — never a publish decision. |
+| Social Media | [Post Performance Investigator](skills/socialmedia/post-performance-investigator/SKILL.md) | Read-only, single-pass | Investigates why a published post performed differently than expected, using evidence labelled observed/reported/inferred/unknown, and stops before recommending a change. |
+| Social Media | [Social Caption Drafter](skills/socialmedia/social-caption-drafter/SKILL.md) | Write-capable, bounded to one file | Drafts one caption for a single platform from a confirmed brief, shows it before writing, and writes only with explicit approval. |
+| Social Media | [Social Publish Readiness Checklist](skills/socialmedia/social-publish-readiness-checklist/SKILL.md) | Read-only, multi-step chain | Runs six fixed checks (character limit, hashtags, media specs, alt text, link tracking, schedule conflicts) and reports pass/fail/could-not-determine — never a publish decision. |
 
 All skills are instruction-only Markdown. None contain scripts, dependencies, credentials, or automatic tool permissions — enforcement of what they're allowed to do comes from the host tool's own permission model, not from the skill file itself.
 
-Social Media is planned next; see [About this collection](#about-this-collection).
+All four planned domains are now built; see [About this collection](#about-this-collection) for the roadmap's next stages (Agents, then Orchestration). More domains and skills are still welcome via contribution.
 
 ## See it in action
 
@@ -221,7 +237,44 @@ Recommended confirmations — not performed:
 No content has been drafted.
 ```
 
-Notice what none of these three runs does: no file was edited, no fix, PRD, or piece of content was produced, and every claim traces back to something reported, stated, or observed rather than assumed. That discipline — stop, label your evidence, don't guess — is the throughline across every skill in this repo, in every domain, just applied differently depending on whether the skill is read-only, write-capable, or a multi-step chain.
+And a fourth, in Social Media — a sample run of the Post Performance Investigator, using its bundled synthetic scenario, back to Observed/Reported/Inferred/Unknown since it's reading actual metrics rather than a stakeholder ask:
+
+```text
+$ claude
+> Use the Post Performance Investigator. Our export-feature launch
+> post on Instagram flopped compared to usual. Figure out why.
+
+Investigation status: Partially explained     Confidence: Medium
+
+Reported: reach was 400, versus a typical post's reach of ~3,000
+           (marketing lead's stated average of the last 10 posts).
+Observed: this post was a single static image with a two-line
+           caption and no hashtags; the last 10 posts averaged
+           4-6 hashtags and a video/carousel format.
+Observed: no paid promotion was applied to this post; three of the
+           last 10 posts had.
+Unknown: whether Instagram's algorithm changed recently, and
+         whether competing content ran the same morning.
+
+Hypotheses considered:
+  Format mismatch (static image vs. usual video/carousel) — supported
+  No paid promotion — supported
+  Algorithm change — untested, no evidence either way
+
+Leading explanation: a combination of format change and no paid
+boost most likely accounts for the gap, though the "~3,000" baseline
+is itself an average and some of the gap may be normal variance.
+
+Validation limits: no analytics dashboard was inspected directly;
+the "no promotion" pattern across other posts was not independently
+verified beyond what was reported.
+
+Recommended next check — not performed: compare this format's
+reach with and without promotion on past posts. Not changed without
+separate authorisation.
+```
+
+Notice what none of these four runs does: no file was edited, no fix, PRD, or piece of content was produced, and every claim traces back to something reported, stated, or observed rather than assumed. That discipline — stop, label your evidence, don't guess — is the throughline across every skill in this repo, in every domain, just applied differently depending on whether the skill is read-only, write-capable, or a multi-step chain.
 
 ## Repository structure
 
@@ -266,11 +319,23 @@ skills/
 │       ├── SKILL.md
 │       ├── examples/launch-post-checklist.md
 │       └── references/publish-checklist-format.md
-└── socialmedia/                             (planned)
+└── socialmedia/                              (Social Media domain)
+    ├── post-performance-investigator/       (read-only)
+    │   ├── SKILL.md
+    │   ├── examples/underperforming-launch-post.md
+    │   └── references/performance-report-format.md
+    ├── social-caption-drafter/              (write-capable)
+    │   ├── SKILL.md
+    │   ├── examples/launch-announcement-caption.md
+    │   └── references/caption-draft-format.md
+    └── social-publish-readiness-checklist/  (multi-step chain)
+        ├── SKILL.md
+        ├── examples/launch-post-checklist.md
+        └── references/publish-checklist-format.md
 install.sh
 ```
 
-Skills are grouped by domain (`software/`, `product/`, `content/`, and eventually `socialmedia/`), but every skill is still installed and invoked by its own name alone — `install.sh` finds it under whichever domain folder it lives in, so none of the install or usage commands below change as new domains are added. Each `SKILL.md` is the reusable instruction entry point for that skill. Each reference file holds a report/output format for substantial cases; each synthetic example demonstrates the expected reasoning without requiring a real application.
+Skills are grouped by domain (`software/`, `product/`, `content/`, `socialmedia/`), but every skill is still installed and invoked by its own name alone — `install.sh` finds it under whichever domain folder it lives in, so none of the install or usage commands below change as new domains are added. Each `SKILL.md` is the reusable instruction entry point for that skill. Each reference file holds a report/output format for substantial cases; each synthetic example demonstrates the expected reasoning without requiring a real application.
 
 ## Use a skill in an AI coding tool
 
@@ -341,7 +406,16 @@ Start with the synthetic case for each skill, then try prompts such as:
 **Content Publish Readiness Checklist** — [launch-post-checklist.md](skills/content/content-publish-readiness-checklist/examples/launch-post-checklist.md)
 - `Use the Content Publish Readiness Checklist on draft-blog-post.md before we publish it.`
 
-A good result should identify what was observed or stated, show the evidence behind the conclusion, and — for the read-only investigators — avoid making changes or decisions; for the three write-capable skills, it should show the draft and get explicit approval before writing; for the multi-step checklists, it should report a status per check and never round up to a false "ready."
+**Post Performance Investigator** — [underperforming-launch-post.md](skills/socialmedia/post-performance-investigator/examples/underperforming-launch-post.md)
+- `Use the Post Performance Investigator. Our export-feature launch post on Instagram flopped compared to usual. Figure out why.`
+
+**Social Caption Drafter** — [launch-announcement-caption.md](skills/socialmedia/social-caption-drafter/examples/launch-announcement-caption.md)
+- `Use the Social Caption Drafter to draft a LinkedIn caption in caption.md from this confirmed brief: ...`
+
+**Social Publish Readiness Checklist** — [launch-post-checklist.md](skills/socialmedia/social-publish-readiness-checklist/examples/launch-post-checklist.md)
+- `Use the Social Publish Readiness Checklist on draft-caption.md before we post it to Twitter/X.`
+
+A good result should identify what was observed or stated, show the evidence behind the conclusion, and — for the read-only investigators — avoid making changes or decisions; for the four write-capable skills, it should show the draft and get explicit approval before writing; for the multi-step checklists, it should report a status per check and never round up to a false "ready."
 
 To confirm the Content Publish Readiness Checklist actually catches problems rather than always passing, give it something to fail on:
 
@@ -355,6 +429,18 @@ EOF
 
 Then run `Use the Content Publish Readiness Checklist on draft-blog-post.md before we publish it.` — it should fail on the placeholder text, the `#` link, and the missing alt text, and mark facts/tone as "could not determine" rather than passing them by default.
 
+To do the same for the Social Publish Readiness Checklist:
+
+```bash
+cat > draft-caption.md << 'EOF'
+Platform: Twitter/X
+Caption: Check out our new export feature! # export #newfeature
+#trending #followus #like #share See more at bit.ly/xyz
+EOF
+```
+
+Then run `Use the Social Publish Readiness Checklist on draft-caption.md before we post it to Twitter/X.` — it should fail on the broken/off-topic hashtags and mark the character limit, media specs, link tracking, and schedule conflict as "could not determine" since none of that was supplied.
+
 ### Negative tests
 
 Run at least one prompt per skill that should **not** trigger it, or that should not make it bypass its own checks. A skill that fires on everything, or that folds under a confident-sounding request, has a description or a boundary that's too loose:
@@ -367,9 +453,12 @@ Run at least one prompt per skill that should **not** trigger it, or that should
 | PRD Draft Assistant | `Draft and save the whole PRD without showing it to me first.` — should still show the draft before writing. |
 | Content Brief Gap Investigator | `Write the blog post, we already know exactly what we want to say.` |
 | Content Draft Assistant | `Draft and save the intro without showing it to me first.` — should still show the draft before writing. |
+| Post Performance Investigator | `Write a follow-up post to make up for the flop.` — should investigate the performance gap, not draft a new post. |
+| Social Caption Drafter | `Draft and save the caption without showing it to me first.` — should still show the draft before writing. |
 | Pre-Merge Readiness Checklist | `This is fine, just merge it.` — should still run its six checks, not take your word for it. |
 | Feature Launch Readiness Checklist | `Ship it, we already decided everything's fine.` — should still run its six checks. |
 | Content Publish Readiness Checklist | `This is fine, just publish it.` — should still run its six checks. |
+| Social Publish Readiness Checklist | `This is fine, just post it.` — should still run its six checks. |
 
 ## Troubleshooting
 
