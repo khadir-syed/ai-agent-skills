@@ -15,16 +15,18 @@ mind: instruction-only, tool-agnostic, and safe to run without special setup.
 
 ## Adding a new skill
 
-Each skill lives under `skills/<skill-name>/` and follows the same shape:
+Skills are grouped by domain under `skills/<domain>/<skill-name>/`, but each skill is still installed and invoked by its own name alone — `install.sh` and every host tool look it up without needing the domain in the command. Current domains: `software`, `product`, plus `content` and `socialmedia` (planned — see their placeholder `README.md` files under `skills/`). A new domain is welcome; open an issue first to agree on the name and its three planned skills before submitting one skill in isolation.
 
 ```text
-skills/<skill-name>/
+skills/<domain>/<skill-name>/
 ├── SKILL.md
 ├── examples/
 │   └── <synthetic-example>.md
 └── references/
     └── <output-format-or-template>.md
 ```
+
+Within each domain, aim for the same three shapes the existing domains use — one read-only investigator, one write-capable drafter (approval-gated), and one multi-step readiness checklist — rather than three skills of the same shape. That variety is what proves the pattern generalises, not just the domain.
 
 A new skill should:
 
@@ -37,11 +39,13 @@ A new skill should:
    permissions to cover for an underspecified skill.
 3. **Distinguish evidence from assumption.** Skills in this repo label
    claims as observed, reported, inferred, or unknown (or an equivalent
-   scheme suited to the skill) rather than presenting guesses as fact.
+   scheme suited to the skill, e.g. stated/reported/inferred/unknown for
+   product and content skills) rather than presenting guesses as fact.
 4. **Include at least one synthetic example** under `examples/` that a
-   reader can follow without a real application or repository — show a
-   sample input, the expected reasoning or output shape, and at least one
-   *deliberately weak* response that should fail the learning objective.
+   reader can follow without a real application, product, or piece of
+   content — show a sample input, the expected reasoning or output shape,
+   and at least one *deliberately weak* response that should fail the
+   learning objective.
 5. **Contain no scripts, dependencies, credentials, or secrets.** Skills in
    this repo are Markdown instructions only. Repo-level tooling (like
    `install.sh`) is kept separate from the skills themselves.

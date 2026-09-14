@@ -15,7 +15,7 @@ Then, in Codex, Claude Code, or Copilot CLI, try the first prompt from [Try the 
 
 - [About this collection](#about-this-collection)
 - [How a skill actually works](#how-a-skill-actually-works)
-- [The three skills](#the-three-skills)
+- [The skills](#the-skills)
 - [See it in action](#see-it-in-action)
 - [Repository structure](#repository-structure)
 - [Use a skill in an AI coding tool](#use-a-skill-in-an-ai-coding-tool)
@@ -60,7 +60,7 @@ flowchart LR
     F -->|Not approved| E
 ```
 
-Here's that same flow traced through a real skill — [Root Cause Investigator](skills/root-cause-investigator/SKILL.md) — end to end:
+Here's that same flow traced through a real skill — [Root Cause Investigator](skills/software/root-cause-investigator/SKILL.md) — end to end:
 
 ```mermaid
 flowchart TD
@@ -79,12 +79,12 @@ Every skill follows one of the same three shapes, whichever domain it's applied 
 
 | Domain | Skill | Shape | What it does |
 |---|---|---|---|
-| Tech / Software | [Root Cause Investigator](skills/root-cause-investigator/SKILL.md) | Read-only, single-pass | Investigates a defect using labelled evidence (observed/reported/inferred/unknown) and stops before remediation. |
-| Tech / Software | [Changelog Entry Drafter](skills/changelog-entry-drafter/SKILL.md) | Write-capable, bounded to one file | Drafts a dated `CHANGELOG.md` entry from commits or a diff, shows it before writing, and writes only with explicit approval. |
-| Tech / Software | [Pre-Merge Readiness Checklist](skills/pre-merge-readiness-checklist/SKILL.md) | Read-only, multi-step chain | Runs six fixed checks (tests, docs, debug leftovers, commit convention, secrets, sensitive files) and reports pass/fail/could-not-determine — never a false "ready." |
-| Product | [Requirements Gap Investigator](skills/requirements-gap-investigator/SKILL.md) | Read-only, single-pass | Surfaces unstated assumptions and conflicting stakeholder signals in a vague feature ask, labelled stated/reported/inferred/unknown, and stops before drafting requirements. |
-| Product | [PRD Draft Assistant](skills/prd-draft-assistant/SKILL.md) | Write-capable, bounded to one file | Drafts a PRD section from confirmed notes or a brief, shows it before writing, and writes only with explicit approval. |
-| Product | [Feature Launch Readiness Checklist](skills/feature-launch-readiness-checklist/SKILL.md) | Read-only, multi-step chain | Runs six fixed checks (rollback plan, rollout control, success metric, docs, support briefing, known blockers) and reports pass/fail/could-not-determine — never a launch decision. |
+| Tech / Software | [Root Cause Investigator](skills/software/root-cause-investigator/SKILL.md) | Read-only, single-pass | Investigates a defect using labelled evidence (observed/reported/inferred/unknown) and stops before remediation. |
+| Tech / Software | [Changelog Entry Drafter](skills/software/changelog-entry-drafter/SKILL.md) | Write-capable, bounded to one file | Drafts a dated `CHANGELOG.md` entry from commits or a diff, shows it before writing, and writes only with explicit approval. |
+| Tech / Software | [Pre-Merge Readiness Checklist](skills/software/pre-merge-readiness-checklist/SKILL.md) | Read-only, multi-step chain | Runs six fixed checks (tests, docs, debug leftovers, commit convention, secrets, sensitive files) and reports pass/fail/could-not-determine — never a false "ready." |
+| Product | [Requirements Gap Investigator](skills/product/requirements-gap-investigator/SKILL.md) | Read-only, single-pass | Surfaces unstated assumptions and conflicting stakeholder signals in a vague feature ask, labelled stated/reported/inferred/unknown, and stops before drafting requirements. |
+| Product | [PRD Draft Assistant](skills/product/prd-draft-assistant/SKILL.md) | Write-capable, bounded to one file | Drafts a PRD section from confirmed notes or a brief, shows it before writing, and writes only with explicit approval. |
+| Product | [Feature Launch Readiness Checklist](skills/product/feature-launch-readiness-checklist/SKILL.md) | Read-only, multi-step chain | Runs six fixed checks (rollback plan, rollout control, success metric, docs, support briefing, known blockers) and reports pass/fail/could-not-determine — never a launch decision. |
 
 All skills are instruction-only Markdown. None contain scripts, dependencies, credentials, or automatic tool permissions — enforcement of what they're allowed to do comes from the host tool's own permission model, not from the skill file itself.
 
@@ -133,46 +133,38 @@ Notice what it does *not* do: no file was edited, no fix was proposed as fact, a
 
 ```text
 skills/
-├── root-cause-investigator/            (Tech / Software — read-only)
-│   ├── SKILL.md
-│   ├── examples/
-│   │   └── ui-api-field-mismatch.md
-│   └── references/
-│       └── investigation-report.md
-├── changelog-entry-drafter/            (Tech / Software — write-capable)
-│   ├── SKILL.md
-│   ├── examples/
-│   │   └── version-bump-example.md
-│   └── references/
-│       └── changelog-entry-format.md
-├── pre-merge-readiness-checklist/      (Tech / Software — multi-step chain)
-│   ├── SKILL.md
-│   ├── examples/
-│   │   └── missing-tests-example.md
-│   └── references/
-│       └── checklist-report-format.md
-├── requirements-gap-investigator/      (Product — read-only)
-│   ├── SKILL.md
-│   ├── examples/
-│   │   └── vague-export-request.md
-│   └── references/
-│       └── gap-report-format.md
-├── prd-draft-assistant/                (Product — write-capable)
-│   ├── SKILL.md
-│   ├── examples/
-│   │   └── export-feature-prd.md
-│   └── references/
-│       └── prd-section-format.md
-└── feature-launch-readiness-checklist/ (Product — multi-step chain)
-    ├── SKILL.md
-    ├── examples/
-    │   └── export-feature-launch.md
-    └── references/
-        └── launch-checklist-format.md
+├── software/                              (Tech / Software domain)
+│   ├── root-cause-investigator/           (read-only)
+│   │   ├── SKILL.md
+│   │   ├── examples/ui-api-field-mismatch.md
+│   │   └── references/investigation-report.md
+│   ├── changelog-entry-drafter/           (write-capable)
+│   │   ├── SKILL.md
+│   │   ├── examples/version-bump-example.md
+│   │   └── references/changelog-entry-format.md
+│   └── pre-merge-readiness-checklist/     (multi-step chain)
+│       ├── SKILL.md
+│       ├── examples/missing-tests-example.md
+│       └── references/checklist-report-format.md
+├── product/                                (Product domain)
+│   ├── requirements-gap-investigator/     (read-only)
+│   │   ├── SKILL.md
+│   │   ├── examples/vague-export-request.md
+│   │   └── references/gap-report-format.md
+│   ├── prd-draft-assistant/               (write-capable)
+│   │   ├── SKILL.md
+│   │   ├── examples/export-feature-prd.md
+│   │   └── references/prd-section-format.md
+│   └── feature-launch-readiness-checklist/ (multi-step chain)
+│       ├── SKILL.md
+│       ├── examples/export-feature-launch.md
+│       └── references/launch-checklist-format.md
+├── content/                                 (planned)
+└── socialmedia/                             (planned)
 install.sh
 ```
 
-Each `SKILL.md` is the reusable instruction entry point for that skill. Each reference file holds a report/output format for substantial cases; each synthetic example demonstrates the expected reasoning without requiring a real application.
+Skills are grouped by domain (`software/`, `product/`, and eventually `content/`, `socialmedia/`), but every skill is still installed and invoked by its own name alone — `install.sh` finds it under whichever domain folder it lives in, so none of the install or usage commands below change as new domains are added. Each `SKILL.md` is the reusable instruction entry point for that skill. Each reference file holds a report/output format for substantial cases; each synthetic example demonstrates the expected reasoning without requiring a real application.
 
 ## Use a skill in an AI coding tool
 
@@ -215,23 +207,23 @@ Copies into project-level directories only (`.agents/skills/`, `.claude/skills/`
 
 Start with the synthetic case for each skill, then try prompts such as:
 
-**Root Cause Investigator** — [ui-api-field-mismatch.md](skills/root-cause-investigator/examples/ui-api-field-mismatch.md)
+**Root Cause Investigator** — [ui-api-field-mismatch.md](skills/software/root-cause-investigator/examples/ui-api-field-mismatch.md)
 - `Use the Root Cause Investigator. The dashboard says there are no orders, but the API appears to return three.`
 - `Find out why the development environment works but staging returns 403. Stop before fixing it.`
 
-**Changelog Entry Drafter** — [version-bump-example.md](skills/changelog-entry-drafter/examples/version-bump-example.md)
+**Changelog Entry Drafter** — [version-bump-example.md](skills/software/changelog-entry-drafter/examples/version-bump-example.md)
 - `Use the Changelog Entry Drafter to draft a CHANGELOG.md entry from the commits since the last tag.`
 
-**Pre-Merge Readiness Checklist** — [missing-tests-example.md](skills/pre-merge-readiness-checklist/examples/missing-tests-example.md)
+**Pre-Merge Readiness Checklist** — [missing-tests-example.md](skills/software/pre-merge-readiness-checklist/examples/missing-tests-example.md)
 - `Run the Pre-Merge Readiness Checklist on my current branch diff against main.`
 
-**Requirements Gap Investigator** — [vague-export-request.md](skills/requirements-gap-investigator/examples/vague-export-request.md)
+**Requirements Gap Investigator** — [vague-export-request.md](skills/product/requirements-gap-investigator/examples/vague-export-request.md)
 - `Use the Requirements Gap Investigator. Sales asked for "an export button on the reports page." Figure out what's actually needed before we write it up.`
 
-**PRD Draft Assistant** — [export-feature-prd.md](skills/prd-draft-assistant/examples/export-feature-prd.md)
+**PRD Draft Assistant** — [export-feature-prd.md](skills/product/prd-draft-assistant/examples/export-feature-prd.md)
 - `Use the PRD Draft Assistant to draft the Problem Statement and Goals sections of PRD.md from this confirmed brief: ...`
 
-**Feature Launch Readiness Checklist** — [export-feature-launch.md](skills/feature-launch-readiness-checklist/examples/export-feature-launch.md)
+**Feature Launch Readiness Checklist** — [export-feature-launch.md](skills/product/feature-launch-readiness-checklist/examples/export-feature-launch.md)
 - `Use the Feature Launch Readiness Checklist on the feature we're shipping this week.`
 
 A good result should identify what was observed or stated, show the evidence behind the conclusion, and — for the read-only skills — avoid making changes or decisions; for the two write-capable skills, it should show the draft and get explicit approval before writing.

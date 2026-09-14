@@ -8,7 +8,7 @@ set -euo pipefail
 
 usage() {
   echo "Usage: $0 [--global] <skill-name>" >&2
-  echo "  <skill-name> must be a directory under skills/" >&2
+  echo "  <skill-name> must be a skill folder under skills/<domain>/" >&2
   exit 1
 }
 
@@ -28,9 +28,19 @@ case "$skill" in
 esac
 
 script_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-src="$script_dir/skills/$skill"
 
-[ -d "$src" ] || { echo "No such skill: skills/$skill" >&2; exit 1; }
+matches=()
+for f in "$script_dir"/skills/*/"$skill"; do
+  [ -d "$f" ] && matches+=("$f")
+done
+
+case "${#matches[@]}" in
+  0) echo "No such skill: $skill (looked under skills/*/$skill)" >&2; exit 1 ;;
+  1) src="${matches[0]}" ;;
+  *) echo "Ambiguous skill name '$skill' found in multiple domains:" >&2
+     printf '  %s\n' "${matches[@]}" >&2
+     exit 1 ;;
+esac
 
 project_targets=(".agents/skills" ".claude/skills" ".github/skills")
 global_targets=("$HOME/.agents/skills" "$HOME/.claude/skills" "$HOME/.copilot/skills")
