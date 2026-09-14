@@ -39,7 +39,7 @@ Stage 1 (Skills) is organised as a grid: the same three shapes — read-only, wr
 |---|---|
 | Tech / Software | Done — 3 skills |
 | Product | Done — 3 skills |
-| Content | Planned |
+| Content | Done — 3 skills |
 | Social Media | Planned |
 
 More skills and domains are welcome through contributions (see [CONTRIBUTING.md](CONTRIBUTING.md)). Stages 2 and 3 (agents, then orchestration) have not started.
@@ -86,6 +86,19 @@ flowchart TD
     G --> H[Stop — no PRD drafted without<br/>separate authorisation]
 ```
 
+And once more in Content — [Content Brief Gap Investigator](skills/content/content-brief-gap-investigator/SKILL.md), tracing a vague creative brief instead of a feature ask:
+
+```mermaid
+flowchart TD
+    A["'Marketing wants something<br/>for launch day, should feel exciting'"] --> B[Skill triggers on the<br/>vague content brief]
+    B --> C[Label each claim:<br/>Stated / Reported / Inferred / Unknown]
+    C --> D[Check for gaps: format,<br/>audience, tone, channel]
+    D --> E[Compare interpretations:<br/>announcement blog post vs. acquisition campaign]
+    E --> F[List what needs confirming,<br/>and with whom]
+    F --> G[Report the gaps + interpretations]
+    G --> H[Stop — no content drafted without<br/>separate authorisation]
+```
+
 ## The skills
 
 Every skill follows one of the same three shapes, whichever domain it's applied to — that repetition is deliberate: learn the pattern once from any one skill, and the rest read as variations, not new concepts.
@@ -98,10 +111,13 @@ Every skill follows one of the same three shapes, whichever domain it's applied 
 | Product | [Requirements Gap Investigator](skills/product/requirements-gap-investigator/SKILL.md) | Read-only, single-pass | Surfaces unstated assumptions and conflicting stakeholder signals in a vague feature ask, labelled stated/reported/inferred/unknown, and stops before drafting requirements. |
 | Product | [PRD Draft Assistant](skills/product/prd-draft-assistant/SKILL.md) | Write-capable, bounded to one file | Drafts a PRD section from confirmed notes or a brief, shows it before writing, and writes only with explicit approval. |
 | Product | [Feature Launch Readiness Checklist](skills/product/feature-launch-readiness-checklist/SKILL.md) | Read-only, multi-step chain | Runs six fixed checks (rollback plan, rollout control, success metric, docs, support briefing, known blockers) and reports pass/fail/could-not-determine — never a launch decision. |
+| Content | [Content Brief Gap Investigator](skills/content/content-brief-gap-investigator/SKILL.md) | Read-only, single-pass | Surfaces unstated audience, goal, tone, and length assumptions in a vague content brief, labelled stated/reported/inferred/unknown, and stops before drafting. |
+| Content | [Content Draft Assistant](skills/content/content-draft-assistant/SKILL.md) | Write-capable, bounded to one file | Drafts one piece or section of content from a confirmed brief, shows it before writing, and writes only with explicit approval. |
+| Content | [Content Publish Readiness Checklist](skills/content/content-publish-readiness-checklist/SKILL.md) | Read-only, multi-step chain | Runs six fixed checks (proofreading, links, SEO basics, alt text, sourced claims, brand tone) and reports pass/fail/could-not-determine — never a publish decision. |
 
 All skills are instruction-only Markdown. None contain scripts, dependencies, credentials, or automatic tool permissions — enforcement of what they're allowed to do comes from the host tool's own permission model, not from the skill file itself.
 
-Content and Social Media domains are planned next; see [About this collection](#about-this-collection).
+Social Media is planned next; see [About this collection](#about-this-collection).
 
 ## See it in action
 
@@ -172,7 +188,40 @@ Recommended confirmations — not performed:
 No PRD or requirements document has been drafted.
 ```
 
-Notice what neither run does: no file was edited, no fix or PRD was produced, and every claim traces back to something reported, stated, or observed rather than assumed. That discipline — stop, label your evidence, don't guess — is the throughline across every skill in this repo, in every domain, just applied differently depending on whether the skill is read-only, write-capable, or a multi-step chain.
+One more, in Content — a sample run of the Content Brief Gap Investigator, using its bundled synthetic scenario:
+
+```text
+$ claude
+> Use the Content Brief Gap Investigator. Marketing asked for
+> "something for launch day" about our new export feature. Figure
+> out what's actually needed before we write it up.
+
+Investigation status: Gaps identified
+
+Stated: Slack message from Marketing lead — "Can we get something
+        ready for launch day about the export feature? Should feel
+        exciting."
+Stated: Ticket description — "Launch content for export feature."
+        (restates the same request, adds no new detail)
+Unknown: content format (blog, email, social, or all three), target
+         channel, audience, target length, and what "exciting"
+         should mean as a tone direction.
+
+Competing interpretations:
+  1. A short announcement blog post aimed at existing customers.
+  2. A social campaign aimed at new-user acquisition.
+  Nothing in the supplied material distinguishes between them.
+
+Recommended confirmations — not performed:
+  - Ask the Marketing lead what "exciting" means in practice (a tone
+    direction, not just an adjective).
+  - Confirm format, channel, audience, and length with Marketing
+    before this is drafted.
+
+No content has been drafted.
+```
+
+Notice what none of these three runs does: no file was edited, no fix, PRD, or piece of content was produced, and every claim traces back to something reported, stated, or observed rather than assumed. That discipline — stop, label your evidence, don't guess — is the throughline across every skill in this repo, in every domain, just applied differently depending on whether the skill is read-only, write-capable, or a multi-step chain.
 
 ## Repository structure
 
@@ -204,12 +253,24 @@ skills/
 │       ├── SKILL.md
 │       ├── examples/export-feature-launch.md
 │       └── references/launch-checklist-format.md
-├── content/                                 (planned)
+├── content/                                 (Content domain)
+│   ├── content-brief-gap-investigator/    (read-only)
+│   │   ├── SKILL.md
+│   │   ├── examples/vague-launch-brief.md
+│   │   └── references/gap-report-format.md
+│   ├── content-draft-assistant/           (write-capable)
+│   │   ├── SKILL.md
+│   │   ├── examples/launch-blog-intro.md
+│   │   └── references/content-section-format.md
+│   └── content-publish-readiness-checklist/ (multi-step chain)
+│       ├── SKILL.md
+│       ├── examples/launch-post-checklist.md
+│       └── references/publish-checklist-format.md
 └── socialmedia/                             (planned)
 install.sh
 ```
 
-Skills are grouped by domain (`software/`, `product/`, and eventually `content/`, `socialmedia/`), but every skill is still installed and invoked by its own name alone — `install.sh` finds it under whichever domain folder it lives in, so none of the install or usage commands below change as new domains are added. Each `SKILL.md` is the reusable instruction entry point for that skill. Each reference file holds a report/output format for substantial cases; each synthetic example demonstrates the expected reasoning without requiring a real application.
+Skills are grouped by domain (`software/`, `product/`, `content/`, and eventually `socialmedia/`), but every skill is still installed and invoked by its own name alone — `install.sh` finds it under whichever domain folder it lives in, so none of the install or usage commands below change as new domains are added. Each `SKILL.md` is the reusable instruction entry point for that skill. Each reference file holds a report/output format for substantial cases; each synthetic example demonstrates the expected reasoning without requiring a real application.
 
 ## Use a skill in an AI coding tool
 
@@ -270,6 +331,15 @@ Start with the synthetic case for each skill, then try prompts such as:
 
 **Feature Launch Readiness Checklist** — [export-feature-launch.md](skills/product/feature-launch-readiness-checklist/examples/export-feature-launch.md)
 - `Use the Feature Launch Readiness Checklist on the feature we're shipping this week.`
+
+**Content Brief Gap Investigator** — [vague-launch-brief.md](skills/content/content-brief-gap-investigator/examples/vague-launch-brief.md)
+- `Use the Content Brief Gap Investigator. Marketing asked for "something for launch day" about our new export feature. Figure out what's actually needed before we write it up.`
+
+**Content Draft Assistant** — [launch-blog-intro.md](skills/content/content-draft-assistant/examples/launch-blog-intro.md)
+- `Use the Content Draft Assistant to draft the intro paragraph of blog-post.md from this confirmed brief: ...`
+
+**Content Publish Readiness Checklist** — [launch-post-checklist.md](skills/content/content-publish-readiness-checklist/examples/launch-post-checklist.md)
+- `Use the Content Publish Readiness Checklist on draft-blog-post.md before we publish it.`
 
 A good result should identify what was observed or stated, show the evidence behind the conclusion, and — for the read-only skills — avoid making changes or decisions; for the two write-capable skills, it should show the draft and get explicit approval before writing.
 
