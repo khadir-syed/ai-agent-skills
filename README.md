@@ -5,7 +5,7 @@ A **skill** is a Markdown file that teaches an AI coding assistant how to approa
 ## Quick start
 
 ```bash
-git clone <this-repo-url> && cd ai-skills-and-agents-samples
+git clone https://github.com/khadir-syed/ai-agent-skills.git && cd ai-agent-skills
 ./install.sh root-cause-investigator
 ```
 
