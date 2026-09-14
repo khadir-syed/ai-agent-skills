@@ -73,6 +73,19 @@ flowchart TD
     G --> H[Stop — no fix applied without<br/>separate authorisation]
 ```
 
+The same shape, applied outside code — here's [Requirements Gap Investigator](skills/product/requirements-gap-investigator/SKILL.md), Product's read-only skill, tracing a vague feature request instead of a bug:
+
+```mermaid
+flowchart TD
+    A["'Sales asked for an export<br/>button on the reports page'"] --> B[Skill triggers on the<br/>vague feature request]
+    B --> C[Label each claim:<br/>Stated / Reported / Inferred / Unknown]
+    C --> D[Check for gaps: format,<br/>scope, roles, platform]
+    D --> E[Compare interpretations:<br/>one-click export vs. scheduled reports]
+    E --> F[List what needs confirming,<br/>and with whom]
+    F --> G[Report the gaps + interpretations]
+    G --> H[Stop — no PRD drafted without<br/>separate authorisation]
+```
+
 ## The skills
 
 Every skill follows one of the same three shapes, whichever domain it's applied to — that repetition is deliberate: learn the pattern once from any one skill, and the rest read as variations, not new concepts.
@@ -127,7 +140,39 @@ mapping and confirm which property it reads. Not changed without
 separate authorisation.
 ```
 
-Notice what it does *not* do: no file was edited, no fix was proposed as fact, and every claim is traceable back to something reported or observed. That discipline — stop, label your evidence, don't guess — is the throughline across every skill in this repo, just applied differently depending on whether the skill is read-only, write-capable, or a multi-step chain.
+And here's the same discipline applied outside code — a sample run of the Requirements Gap Investigator (Product domain), using its bundled synthetic scenario:
+
+```text
+$ claude
+> Use the Requirements Gap Investigator. Sales asked for "an export
+> button on the reports page." Figure out what's actually needed
+> before we write it up.
+
+Investigation status: Gaps identified
+
+Stated: Slack message from Sales — "Can we get an export on the
+        reports page? Customers keep asking."
+Stated: Ticket description — "Export button for reports page."
+        (restates the same request, adds no new detail)
+Unknown: export file format, which report(s) on a page that may show
+         several, whether this applies on mobile, which user roles
+         should see the button.
+
+Competing interpretations:
+  1. A one-click CSV export of the currently viewed report.
+  2. A scheduled export / report-subscription feature.
+  Nothing in the supplied material distinguishes between them.
+
+Recommended confirmations — not performed:
+  - Ask the Sales lead what "customers keep asking" actually means in
+    practice (a one-off download, or a recurring need).
+  - Confirm file format, scope (which report(s)), and role/platform
+    requirements with design/eng before this is scoped.
+
+No PRD or requirements document has been drafted.
+```
+
+Notice what neither run does: no file was edited, no fix or PRD was produced, and every claim traces back to something reported, stated, or observed rather than assumed. That discipline — stop, label your evidence, don't guess — is the throughline across every skill in this repo, in every domain, just applied differently depending on whether the skill is read-only, write-capable, or a multi-step chain.
 
 ## Repository structure
 
