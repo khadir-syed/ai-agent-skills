@@ -16,6 +16,7 @@ Then, in Codex, Claude Code, or Copilot CLI, try the first prompt from [Try the 
 - [About this collection](#about-this-collection)
 - [How a skill actually works](#how-a-skill-actually-works)
 - [The skills](#the-skills)
+- [Agents (Stage 2)](agents/README.md)
 - [See it in action](#see-it-in-action)
 - [Repository structure](#repository-structure)
 - [Use a skill in an AI coding tool](#use-a-skill-in-an-ai-coding-tool)
@@ -42,7 +43,14 @@ Stage 1 (Skills) is organised as a grid: the same three shapes — read-only, wr
 | Content | Done — 3 skills |
 | Social Media | Done — 3 skills |
 
-More skills and domains are welcome through contributions (see [CONTRIBUTING.md](CONTRIBUTING.md)). Stages 2 and 3 (agents, then orchestration) have not started.
+More skills and domains are welcome through contributions (see [CONTRIBUTING.md](CONTRIBUTING.md)).
+
+Stage 2 (Agents) has started: two domains (Software, Product) each ship the
+same job twice — once with a human approving every step, once with fewer
+checkpoints — so you can compare what changes when a human leaves the loop.
+See [agents/README.md](agents/README.md) for all four agents, how they're
+tested, and what a real negative (bypass-attempt) test found. Stage 3
+(orchestration) has not started.
 
 ## How a skill actually works
 
@@ -133,7 +141,7 @@ Every skill follows one of the same three shapes, whichever domain it's applied 
 
 All skills are instruction-only Markdown. None contain scripts, dependencies, credentials, or automatic tool permissions — enforcement of what they're allowed to do comes from the host tool's own permission model, not from the skill file itself.
 
-All four planned domains are now built; see [About this collection](#about-this-collection) for the roadmap's next stages (Agents, then Orchestration). More domains and skills are still welcome via contribution.
+All four planned domains are now built; see [About this collection](#about-this-collection) for the roadmap's next stage — [Agents](agents/README.md), now underway, with Orchestration still to come. More domains and skills are still welcome via contribution.
 
 ## See it in action
 
@@ -359,6 +367,12 @@ The **Claude desktop/web app is different**: it does not read a project folder a
 2. **Customize → Skills** → **+** → **Create skill** → **Upload a skill**.
 3. Select a ZIP of the skill folder with `SKILL.md` at the ZIP's root — not nested inside another folder, which is the most common upload failure.
 4. Toggle the skill **on** after uploading — uploaded is not the same as enabled.
+
+This upload flow works for any Markdown-only skill or agent in this repo.
+It does **not** work for [test-fix-loop-agent](agents/software/test-fix-loop-agent/) —
+that one is a Python script, not a Markdown instruction file, and neither
+Claude Desktop nor Claude web can execute it. That agent is CLI-only; see its
+own [README](agents/software/test-fix-loop-agent/README.md).
 
 ### Using the install script
 

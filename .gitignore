@@ -5,3 +5,7 @@
 .vscode/
 .idea/
 *.swp
+
+# Python (agents/software/test-fix-loop-agent)
+__pycache__/
+*.pyc
