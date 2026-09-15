@@ -15,7 +15,7 @@ mind: instruction-only, tool-agnostic, and safe to run without special setup.
 
 ## Adding a new skill
 
-Skills are grouped by domain under `skills/<domain>/<skill-name>/`, but each skill is still installed and invoked by its own name alone — `install.sh` and every host tool look it up without needing the domain in the command. Current domains: `software`, `product`, plus `content` and `socialmedia` (planned — see their placeholder `README.md` files under `skills/`). A new domain is welcome; open an issue first to agree on the name and its three planned skills before submitting one skill in isolation.
+Skills are grouped by domain under `skills/<domain>/<skill-name>/`, but each skill is still installed and invoked by its own name alone — `install.sh` and every host tool look it up without needing the domain in the command. Current domains: `software`, `product`, `content`, and `socialmedia` (see [skills/README.md](skills/README.md) for the full grid). A new domain is welcome; open an issue first to agree on the name and its three planned skills before submitting one skill in isolation.
 
 ```text
 skills/<domain>/<skill-name>/
@@ -49,8 +49,8 @@ A new skill should:
 5. **Contain no scripts, dependencies, credentials, or secrets.** Skills in
    this repo are Markdown instructions only. Repo-level tooling (like
    `install.sh`) is kept separate from the skills themselves.
-6. **Add the skill to the README** — the skills table, the repository
-   structure tree, and the "Try the samples" section.
+6. **Add the skill to [skills/README.md](skills/README.md)** — the skills
+   table, the repository structure tree, and the "Try the samples" section.
 
 ## Adding a new agent
 
