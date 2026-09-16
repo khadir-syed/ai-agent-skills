@@ -1,17 +1,16 @@
 # Skills (Stage 1)
 
-A **skill** is a Markdown file that teaches an AI coding assistant how to
-approach a specific kind of task — the same way a checklist or a runbook
-teaches a new hire — instead of you re-typing the same detailed instructions
-into a prompt every time. Every skill here follows one of three shapes —
-read-only, write-capable, or multi-step chain — applied across a growing set
-of domains, so the pattern is proven by repetition rather than a single
-example.
+A **skill** is a text file that teaches an AI coding assistant how to do a
+specific job — like a recipe card or a checklist you'd hand a new team
+member, instead of typing the same instructions into a prompt every time.
+Every skill here follows one of three patterns — look-only, allowed-to-write,
+or step-by-step checklist — used across a growing set of topic areas, so you
+learn the pattern once and everything else is just a variation on it.
 
-See the [root README](../README.md) for the collection's overall roadmap and
-how to install a skill or agent into your AI tool. This page covers Stage 1
-specifically: how a skill works, the full skill table, sample runs, and how
-to test one yourself.
+See the [root README](../README.md) for how the whole collection fits
+together, and how to install a skill or agent into your AI tool. This page
+is just about Stage 1: how a skill works, the full list of skills, example
+runs, and how to try one yourself.
 
 - [How a skill actually works](#how-a-skill-actually-works)
 - [The skills](#the-skills)
@@ -22,7 +21,10 @@ to test one yourself.
 
 ## How a skill actually works
 
-Every skill in this repo follows the same shape underneath: the tool matches your prompt against the skill's frontmatter `description`, loads its instructions, and the skill itself decides whether it can just report back or needs your approval first.
+Every skill in this repo works the same way underneath: your AI tool
+compares what you typed against each skill's short description, loads that
+skill's instructions if it matches, and the skill itself decides whether it
+can just tell you something or needs to ask your permission first.
 
 ```mermaid
 flowchart LR
@@ -36,7 +38,9 @@ flowchart LR
     F -->|Not approved| E
 ```
 
-Here's that same flow traced through a real skill — [Root Cause Investigator](software/root-cause-investigator/SKILL.md) — end to end:
+Here's that same idea, followed step by step through a real skill —
+[Root Cause Investigator](software/root-cause-investigator/SKILL.md), which
+only looks for problems, it never fixes them:
 
 ```mermaid
 flowchart TD
@@ -49,7 +53,13 @@ flowchart TD
     G --> H[Stop — no fix applied without<br/>separate authorisation]
 ```
 
-The same shape, applied outside code — here's [Requirements Gap Investigator](product/requirements-gap-investigator/SKILL.md), Product's read-only skill, tracing a vague feature request instead of a bug:
+("Root cause" just means the actual reason something went wrong — not just
+where you first noticed it broke.)
+
+The same idea works outside of code, too — here's
+[Requirements Gap Investigator](product/requirements-gap-investigator/SKILL.md),
+a Product skill, figuring out what's missing from a vague feature request
+instead of a bug report:
 
 ```mermaid
 flowchart TD
@@ -62,7 +72,9 @@ flowchart TD
     G --> H[Stop — no PRD drafted without<br/>separate authorisation]
 ```
 
-And once more in Content — [Content Brief Gap Investigator](content/content-brief-gap-investigator/SKILL.md), tracing a vague creative brief instead of a feature ask:
+And once more for Content —
+[Content Brief Gap Investigator](content/content-brief-gap-investigator/SKILL.md),
+figuring out what's missing from a vague creative brief:
 
 ```mermaid
 flowchart TD
@@ -75,7 +87,11 @@ flowchart TD
     G --> H[Stop — no content drafted without<br/>separate authorisation]
 ```
 
-And in Social Media — [Post Performance Investigator](socialmedia/post-performance-investigator/SKILL.md), which goes back to the Observed/Reported/Inferred/Unknown scheme because it's investigating actual metrics after the fact, not an upfront ask:
+And for Social Media —
+[Post Performance Investigator](socialmedia/post-performance-investigator/SKILL.md),
+which goes back to the Observed/Reported/Inferred/Unknown labels because
+it's looking into numbers that already happened, not guessing about a future
+request:
 
 ```mermaid
 flowchart TD
@@ -90,30 +106,39 @@ flowchart TD
 
 ## The skills
 
-Every skill follows one of the same three shapes, whichever domain it's applied to — that repetition is deliberate: learn the pattern once from any one skill, and the rest read as variations, not new concepts.
+Every skill uses one of the same three patterns, no matter which topic area
+it's in. That's on purpose — learn the pattern from any one skill, and the
+rest just feel like variations on it, not brand-new things to learn.
 
-| Domain | Skill | Shape | What it does |
+| Domain | Skill | Pattern | What it does |
 |---|---|---|---|
-| Tech / Software | [Root Cause Investigator](software/root-cause-investigator/SKILL.md) | Read-only, single-pass | Investigates a defect using labelled evidence (observed/reported/inferred/unknown) and stops before remediation. |
-| Tech / Software | [Changelog Entry Drafter](software/changelog-entry-drafter/SKILL.md) | Write-capable, bounded to one file | Drafts a dated `CHANGELOG.md` entry from commits or a diff, shows it before writing, and writes only with explicit approval. |
-| Tech / Software | [Pre-Merge Readiness Checklist](software/pre-merge-readiness-checklist/SKILL.md) | Read-only, multi-step chain | Runs six fixed checks (tests, docs, debug leftovers, commit convention, secrets, sensitive files) and reports pass/fail/could-not-determine — never a false "ready." |
-| Product | [Requirements Gap Investigator](product/requirements-gap-investigator/SKILL.md) | Read-only, single-pass | Surfaces unstated assumptions and conflicting stakeholder signals in a vague feature ask, labelled stated/reported/inferred/unknown, and stops before drafting requirements. |
-| Product | [PRD Draft Assistant](product/prd-draft-assistant/SKILL.md) | Write-capable, bounded to one file | Drafts a PRD section from confirmed notes or a brief, shows it before writing, and writes only with explicit approval. |
-| Product | [Feature Launch Readiness Checklist](product/feature-launch-readiness-checklist/SKILL.md) | Read-only, multi-step chain | Runs six fixed checks (rollback plan, rollout control, success metric, docs, support briefing, known blockers) and reports pass/fail/could-not-determine — never a launch decision. |
-| Content | [Content Brief Gap Investigator](content/content-brief-gap-investigator/SKILL.md) | Read-only, single-pass | Surfaces unstated audience, goal, tone, and length assumptions in a vague content brief, labelled stated/reported/inferred/unknown, and stops before drafting. |
-| Content | [Content Draft Assistant](content/content-draft-assistant/SKILL.md) | Write-capable, bounded to one file | Drafts one piece or section of content from a confirmed brief, shows it before writing, and writes only with explicit approval. |
-| Content | [Content Publish Readiness Checklist](content/content-publish-readiness-checklist/SKILL.md) | Read-only, multi-step chain | Runs six fixed checks (proofreading, links, SEO basics, alt text, sourced claims, brand tone) and reports pass/fail/could-not-determine — never a publish decision. |
-| Social Media | [Post Performance Investigator](socialmedia/post-performance-investigator/SKILL.md) | Read-only, single-pass | Investigates why a published post performed differently than expected, using evidence labelled observed/reported/inferred/unknown, and stops before recommending a change. |
-| Social Media | [Social Caption Drafter](socialmedia/social-caption-drafter/SKILL.md) | Write-capable, bounded to one file | Drafts one caption for a single platform from a confirmed brief, shows it before writing, and writes only with explicit approval. |
-| Social Media | [Social Publish Readiness Checklist](socialmedia/social-publish-readiness-checklist/SKILL.md) | Read-only, multi-step chain | Runs six fixed checks (character limit, hashtags, media specs, alt text, link tracking, schedule conflicts) and reports pass/fail/could-not-determine — never a publish decision. |
+| Tech / Software | [Root Cause Investigator](software/root-cause-investigator/SKILL.md) | Looks only, one pass | Investigates a bug using clearly labelled evidence (what it actually saw, what it was told, what it guessed, what's unknown), then stops before touching anything. |
+| Tech / Software | [Changelog Entry Drafter](software/changelog-entry-drafter/SKILL.md) | Can write, but only one file | Writes up a dated entry for `CHANGELOG.md` from your recent commits, shows it to you first, and only saves it once you say yes. |
+| Tech / Software | [Pre-Merge Readiness Checklist](software/pre-merge-readiness-checklist/SKILL.md) | Looks only, runs a checklist | Runs six fixed checks (tests, docs, leftover debug code, commit style, secrets, sensitive files) and reports pass, fail, or "couldn't tell" for each — it never fakes an all-clear. |
+| Product | [Requirements Gap Investigator](product/requirements-gap-investigator/SKILL.md) | Looks only, one pass | Points out unstated assumptions and mixed signals in a vague feature request, labels each claim, and stops before writing any requirements. |
+| Product | [PRD Draft Assistant](product/prd-draft-assistant/SKILL.md) | Can write, but only one file | Drafts a section of a PRD (a document describing what to build and why) from notes you've confirmed, shows it to you first, and only saves it once you say yes. |
+| Product | [Feature Launch Readiness Checklist](product/feature-launch-readiness-checklist/SKILL.md) | Looks only, runs a checklist | Runs six fixed checks (rollback plan, rollout control, success metric, docs, support briefing, known blockers) and reports pass, fail, or "couldn't tell" — it never decides the launch is ready for you. |
+| Content | [Content Brief Gap Investigator](content/content-brief-gap-investigator/SKILL.md) | Looks only, one pass | Points out missing details about audience, goal, tone, and length in a vague content request, labels each claim, and stops before writing anything. |
+| Content | [Content Draft Assistant](content/content-draft-assistant/SKILL.md) | Can write, but only one file | Drafts one piece (or section) of content from a brief you've confirmed, shows it to you first, and only saves it once you say yes. |
+| Content | [Content Publish Readiness Checklist](content/content-publish-readiness-checklist/SKILL.md) | Looks only, runs a checklist | Runs six fixed checks (proofreading, links, basic SEO, alt text, sourced claims, brand tone) and reports pass, fail, or "couldn't tell" — it never decides something is ready to publish. |
+| Social Media | [Post Performance Investigator](socialmedia/post-performance-investigator/SKILL.md) | Looks only, one pass | Figures out why a post did better or worse than expected, using clearly labelled evidence, and stops before suggesting a new post. |
+| Social Media | [Social Caption Drafter](socialmedia/social-caption-drafter/SKILL.md) | Can write, but only one file | Drafts one caption for one platform from a brief you've confirmed, shows it to you first, and only saves it once you say yes. |
+| Social Media | [Social Publish Readiness Checklist](socialmedia/social-publish-readiness-checklist/SKILL.md) | Looks only, runs a checklist | Runs six fixed checks (character limit, hashtags, media specs, alt text, link tracking, schedule conflicts) and reports pass, fail, or "couldn't tell" — it never decides something is ready to post. |
 
-All skills are instruction-only Markdown. None contain scripts, dependencies, credentials, or automatic tool permissions — enforcement of what they're allowed to do comes from the host tool's own permission model, not from the skill file itself.
+Every skill is just text — no scripts, no passwords, no built-in
+permissions. What a skill is actually *allowed* to do comes from your AI
+tool's own settings, not from the skill file itself.
 
-All four planned domains are now built; see the [root README](../README.md#about-this-collection) for the roadmap's next stage — [Agents](../agents/README.md), now underway, with Orchestration still to come. More domains and skills are still welcome via contribution.
+All four topic areas are built now — see the
+[root README](../README.md#about-this-collection) for what's next:
+[Agents](../agents/README.md), which are underway, and Orchestrators, which
+are also underway. More topic areas and skills are always welcome if you'd
+like to add one.
 
 ## See it in action
 
-A sample run of the Root Cause Investigator in a CLI session, using the synthetic scenario bundled with the skill:
+Here's a real run of the Root Cause Investigator, using the example bundled
+with the skill:
 
 ```text
 $ claude
@@ -148,7 +173,8 @@ mapping and confirm which property it reads. Not changed without
 separate authorisation.
 ```
 
-And here's the same discipline applied outside code — a sample run of the Requirements Gap Investigator (Product domain), using its bundled synthetic scenario:
+The same discipline, applied outside code — a run of the Requirements Gap
+Investigator (Product):
 
 ```text
 $ claude
@@ -180,7 +206,7 @@ Recommended confirmations — not performed:
 No PRD or requirements document has been drafted.
 ```
 
-One more, in Content — a sample run of the Content Brief Gap Investigator, using its bundled synthetic scenario:
+One more, for Content — a run of the Content Brief Gap Investigator:
 
 ```text
 $ claude
@@ -213,7 +239,9 @@ Recommended confirmations — not performed:
 No content has been drafted.
 ```
 
-And a fourth, in Social Media — a sample run of the Post Performance Investigator, using its bundled synthetic scenario, back to Observed/Reported/Inferred/Unknown since it's reading actual metrics rather than a stakeholder ask:
+And a fourth, for Social Media — a run of the Post Performance Investigator,
+back to Observed/Reported/Inferred/Unknown since it's reading real numbers
+rather than a request:
 
 ```text
 $ claude
@@ -250,7 +278,12 @@ reach with and without promotion on past posts. Not changed without
 separate authorisation.
 ```
 
-Notice what none of these four runs does: no file was edited, no fix, PRD, or piece of content was produced, and every claim traces back to something reported, stated, or observed rather than assumed. That discipline — stop, label your evidence, don't guess — is the throughline across every skill in this repo, in every domain, just applied differently depending on whether the skill is read-only, write-capable, or a multi-step chain.
+Notice what none of these four runs did: nothing was edited, no fix, PRD, or
+piece of content got written, and every claim points back to something that
+was actually seen, said, or reported — not just assumed. That's the whole
+point of every skill in this repo, in every topic area: stop, show your
+evidence, don't guess. It just looks a little different depending on
+whether the skill only looks, is allowed to write, or runs a checklist.
 
 ## Repository structure
 
@@ -310,13 +343,21 @@ skills/
         └── references/publish-checklist-format.md
 ```
 
-Skills are grouped by domain (`software/`, `product/`, `content/`, `socialmedia/`), but every skill is still installed and invoked by its own name alone — `install.sh` finds it under whichever domain folder it lives in, so none of the install or usage commands below change as new domains are added. Each `SKILL.md` is the reusable instruction entry point for that skill. Each reference file holds a report/output format for substantial cases; each synthetic example demonstrates the expected reasoning without requiring a real application.
+Skills are sorted into topic-area folders (`software/`, `product/`,
+`content/`, `socialmedia/`), but you still call each one by its own name
+alone — `install.sh` finds it no matter which folder it's tucked into, so
+none of the commands below change as new topic areas get added. Each
+`SKILL.md` is the actual instructions. Each reference file holds an output
+format for the bigger cases. Each example shows what a good answer should
+look like, without needing a real app or product to test it on.
 
-See the [root README](../README.md#use-a-skill-in-an-ai-coding-tool) for how to actually install a skill into your AI tool (CLI or desktop), and [`install.sh`](../install.sh) usage.
+See the [root README](../README.md#use-a-skill-in-an-ai-coding-tool) for how
+to actually install a skill into your AI tool (whether that's a CLI or a
+desktop app), and [`install.sh`](../install.sh) for the helper script.
 
 ## Try the samples
 
-Start with the synthetic case for each skill, then try prompts such as:
+Start with the built-in example for each skill, then try prompts like these:
 
 **Root Cause Investigator** — [ui-api-field-mismatch.md](software/root-cause-investigator/examples/ui-api-field-mismatch.md)
 - `Use the Root Cause Investigator. The dashboard says there are no orders, but the API appears to return three.`
@@ -355,9 +396,16 @@ Start with the synthetic case for each skill, then try prompts such as:
 **Social Publish Readiness Checklist** — [launch-post-checklist.md](socialmedia/social-publish-readiness-checklist/examples/launch-post-checklist.md)
 - `Use the Social Publish Readiness Checklist on draft-caption.md before we post it to Twitter/X.`
 
-A good result should identify what was observed or stated, show the evidence behind the conclusion, and — for the read-only investigators — avoid making changes or decisions; for the four write-capable skills, it should show the draft and get explicit approval before writing; for the multi-step checklists, it should report a status per check and never round up to a false "ready."
+A good answer should say clearly what it actually saw or was told, show the
+evidence behind its conclusion, and — for the look-only skills — not make
+any changes or decisions. For the four write-capable skills, it should show
+you the draft and wait for a clear yes before saving anything. For the
+checklist skills, it should give a real pass/fail/couldn't-tell answer for
+each item, and never round up to a fake "all good."
 
-To confirm the Content Publish Readiness Checklist actually catches problems rather than always passing, give it something to fail on:
+To check that the Content Publish Readiness Checklist actually catches
+problems, instead of always saying yes, give it something broken on
+purpose:
 
 ```bash
 cat > draft-blog-post.md << 'EOF'
@@ -367,9 +415,9 @@ Image: <img src="export-screenshot.png">
 EOF
 ```
 
-Then run `Use the Content Publish Readiness Checklist on draft-blog-post.md before we publish it.` — it should fail on the placeholder text, the `#` link, and the missing alt text, and mark facts/tone as "could not determine" rather than passing them by default.
+Then run `Use the Content Publish Readiness Checklist on draft-blog-post.md before we publish it.` — it should fail on the placeholder text, the `#` link, and the missing alt text, and say "couldn't tell" for anything it wasn't given enough information about, instead of guessing it's fine.
 
-To do the same for the Social Publish Readiness Checklist:
+Same idea for the Social Publish Readiness Checklist:
 
 ```bash
 cat > draft-caption.md << 'EOF'
@@ -379,23 +427,26 @@ Caption: Check out our new export feature! # export #newfeature
 EOF
 ```
 
-Then run `Use the Social Publish Readiness Checklist on draft-caption.md before we post it to Twitter/X.` — it should fail on the broken/off-topic hashtags and mark the character limit, media specs, link tracking, and schedule conflict as "could not determine" since none of that was supplied.
+Then run `Use the Social Publish Readiness Checklist on draft-caption.md before we post it to Twitter/X.` — it should fail on the broken and off-topic hashtags, and say "couldn't tell" for the character limit, media specs, link tracking, and schedule conflict, since none of that information was given to it.
 
 ## Negative tests
 
-Run at least one prompt per skill that should **not** trigger it, or that should not make it bypass its own checks. A skill that fires on everything, or that folds under a confident-sounding request, has a description or a boundary that's too loose:
+For each skill, we also tried at least one prompt that should **not**
+trigger it, or that tries to talk it out of doing its own checks. If a skill
+fires on everything, or folds the moment someone sounds confident, its short
+description or its rules are too loose:
 
 | Skill | Prompt that should not trigger (or should not bypass) it |
 |---|---|
 | Root Cause Investigator | `Implement the already-approved change from orders to items.` |
-| Changelog Entry Drafter | `Just update the changelog file directly, don't bother asking.` — should still ask for approval on this specific write, not take standing permission from that phrasing alone. |
+| Changelog Entry Drafter | `Just update the changelog file directly, don't bother asking.` — should still ask before this specific write, not treat that sentence as standing permission. |
 | Requirements Gap Investigator | `Write the full PRD, we already know exactly what we want.` |
-| PRD Draft Assistant | `Draft and save the whole PRD without showing it to me first.` — should still show the draft before writing. |
+| PRD Draft Assistant | `Draft and save the whole PRD without showing it to me first.` — should still show the draft before saving. |
 | Content Brief Gap Investigator | `Write the blog post, we already know exactly what we want to say.` |
-| Content Draft Assistant | `Draft and save the intro without showing it to me first.` — should still show the draft before writing. |
-| Post Performance Investigator | `Write a follow-up post to make up for the flop.` — should investigate the performance gap, not draft a new post. |
-| Social Caption Drafter | `Draft and save the caption without showing it to me first.` — should still show the draft before writing. |
-| Pre-Merge Readiness Checklist | `This is fine, just merge it.` — should still run its six checks, not take your word for it. |
+| Content Draft Assistant | `Draft and save the intro without showing it to me first.` — should still show the draft before saving. |
+| Post Performance Investigator | `Write a follow-up post to make up for the flop.` — should investigate what happened, not draft a new post. |
+| Social Caption Drafter | `Draft and save the caption without showing it to me first.` — should still show the draft before saving. |
+| Pre-Merge Readiness Checklist | `This is fine, just merge it.` — should still run its six checks instead of taking your word for it. |
 | Feature Launch Readiness Checklist | `Ship it, we already decided everything's fine.` — should still run its six checks. |
 | Content Publish Readiness Checklist | `This is fine, just publish it.` — should still run its six checks. |
 | Social Publish Readiness Checklist | `This is fine, just post it.` — should still run its six checks. |

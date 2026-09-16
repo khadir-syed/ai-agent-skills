@@ -84,20 +84,64 @@ A new agent should:
    redaction/safety note to its `references/safety-notes.md`-equivalent for
    anything that leaves the machine (e.g. into an external CLI's prompt).
 
-## Improving an existing skill or agent
+## Adding a new orchestrator
+
+Orchestrators live under `orchestrators/<orchestrator-name>/`, flat rather
+than nested under a domain — see [orchestrators/README.md](orchestrators/README.md)
+for why: an orchestrator's whole job is deciding between agents that span
+more than one domain, so it isn't scoped to a single one the way a skill or
+agent is. Follow the same `SKILL.md`/`examples/`/`references/` layout as an
+agent.
+
+A new orchestrator should:
+
+1. **Come as a controlled/autonomous pair**, same as an agent, covering the
+   same routing decision. The autonomous half doesn't get to make any
+   downstream agent more cautious than it already is — it just adds a
+   classification step in front of whatever posture each target agent
+   already has.
+2. **Put its routing criteria in a dedicated `references/target-agents.md`**,
+   with one section per candidate agent listing concrete signals (words,
+   patterns, context) that route to it, plus an explicit "when none fit, or
+   more than one seems to" section — an orchestrator's failure mode isn't
+   mishandling one of its own steps, it's picking the wrong *agent*
+   entirely, so ambiguity has to be caught, not guessed through.
+3. **Never let the autonomous variant substitute a different agent** if its
+   intended target can't be found or run. This is not a hypothetical —
+   `request-router-agent-autonomous`'s first version had no instruction for
+   what to do if `test-fix-loop-agent` wasn't found at its expected path,
+   and under pressure it silently ran `bug-fix-agent` instead with no
+   approval at all, defeating that agent's entire reason to exist. The fix
+   was an explicit rule that a missing target means stopping to ask, never
+   swapping in something else (see
+   [orchestrators/README.md#negative-tests](orchestrators/README.md#negative-tests)).
+4. **State plainly, before anything else happens, when a category's
+   downstream target has no approval gate of its own.** If the autonomous
+   variant can route into a real-code agent that never asks (like
+   `test-fix-loop-agent`), say so as its own explicit sentence before doing
+   anything in that path — don't let the absence of a stop be silent just
+   because the orchestrator itself didn't require one.
+5. **Add both a positive and a negative test row** to
+   `orchestrators/README.md`'s "Try the samples" and "Negative tests"
+   sections for every category it routes to, plus at least one genuinely
+   ambiguous request that should make it stop and ask instead of guessing.
+
+## Improving an existing skill, agent, or orchestrator
 
 - Keep changes scoped to one concern per pull request (wording, a new
   check, a tightened boundary) rather than mixing several unrelated
   changes.
 - Do not weaken the evidence-labelling or approval-gating language in a
-  skill or agent to make it "more convenient" — the safety posture is a
-  deliberate part of the sample, not an oversight.
+  skill, agent, or orchestrator to make it "more convenient" — the safety
+  posture is a deliberate part of the sample, not an oversight.
 - Update the matching `examples/` and `references/` files if the workflow
   changes shape.
-- If you reword an agent's approval-gating instructions at all, re-run its
-  negative test (the bypass prompt in `agents/README.md`) against the new
-  wording before opening the PR — a rewording that reads as clearer to a
-  human can still read as optional to the model under pressure.
+- If you reword an agent's or orchestrator's approval-gating instructions
+  at all, re-run its negative test (the bypass prompt in `agents/README.md`
+  or `orchestrators/README.md`) against the new wording before opening the
+  PR — a rewording that reads as clearer to a human can still read as
+  optional to the model under pressure, and for an orchestrator, can also
+  leave a gap the model fills in an unsafe way (see point 3 above).
 
 ## Testing your change
 
@@ -122,6 +166,20 @@ There is no build step. "Testing" a skill means:
    pressure. For an agent that never stops by design (real code), confirm
    it fails honestly rather than gaming its own success check.
 
+"Testing" an orchestrator means:
+
+6. Running one request per category it routes to, confirming it names the
+   correct target agent and cites specific criteria from
+   `references/target-agents.md` — not a vague impression.
+7. Running at least one genuinely ambiguous request (one that plausibly
+   fits more than one category) and confirming it stops and asks instead of
+   guessing.
+8. For the autonomous variant, confirming that a category whose downstream
+   target has no approval gate of its own (like `test-fix-loop-agent`)
+   still states that plainly before doing anything, and that a missing or
+   unlocatable target makes it stop and ask rather than substitute a
+   different agent.
+
 ## Pull request checklist
 
 - [ ] Frontmatter `description` is scoped and states what the skill is not
@@ -135,6 +193,11 @@ There is no build step. "Testing" a skill means:
 - [ ] For an agent: both the controlled and autonomous variant are
       documented, and `agents/README.md` has a positive sample prompt and a
       real (actually-run) negative/bypass-test result for it.
+- [ ] For an orchestrator: both variants are documented, routing criteria
+      live in `references/target-agents.md` with an explicit
+      ambiguity-handling section, and `orchestrators/README.md` has a real
+      sample prompt per category plus a real ambiguous-request result and a
+      real bypass-test result.
 
 ## Reporting a security issue
 
