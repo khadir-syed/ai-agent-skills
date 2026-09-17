@@ -12,10 +12,20 @@ Code, and GitHub Copilot CLI.
 
 ```bash
 git clone https://github.com/khadir-syed/ai-agent-skills.git && cd ai-agent-skills
+mkdir -p .claude
 ./install.sh root-cause-investigator
 ```
 
-Then, in Codex, Claude Code, or Copilot CLI, try the first prompt from [Try the samples](skills/README.md#try-the-samples) in the Skills doc.
+(The `mkdir` step matters — a fresh clone has no `.claude`, `.agents`, or
+`.github` folder yet, and `install.sh` only copies into folders that
+already exist. Using Codex or Copilot CLI instead? Make `.agents` or
+`.github` instead of `.claude`.)
+
+Then, in Codex, Claude Code, or Copilot CLI, try the first prompt from
+[Try the samples](skills/README.md#try-the-samples) in the Skills doc. On
+Claude Code specifically, this first try can be inconsistent — see
+[Troubleshooting](#troubleshooting) if it asks you for real system access
+instead of just running the investigation.
 
 ## Contents
 
@@ -175,6 +185,20 @@ skill — it's not a broken skill. Try typing the skill's name directly first
 (like `/skill-name`) to check it's installed at all, then make the skill's
 short description mention the situations it should catch.
 
+**On Claude Code, the very first sample prompt can be genuinely
+inconsistent — even the `/skill-name` form.** We tested this for real on a
+fresh install: the `root-cause-investigator` sample prompt (both as plain
+language and as `/root-cause-investigator ...`) sometimes ran the actual
+investigation as documented, and sometimes asked for real system access
+instead — across several tries, on identical wording, with no pattern tied
+to which phrasing was used. Codex was consistent in our testing. If this
+happens to you: try again in a fresh session (it may simply work the next
+time), and check whether a personal `~/.claude/CLAUDE.md` is competing with
+the skill — see "A skill on Claude Code ignores its own rules..." further
+down this list. This repo now ships a project-level [`CLAUDE.md`](CLAUDE.md)
+and [`AGENTS.md`](AGENTS.md) that fixes this for both tools — see that entry
+for what it does and why it's still not a 100% guarantee.
+
 **`install.sh` printed "Nothing copied."**
 It only copies into folders that already exist in your current project
 (`.agents/`, `.claude/`, `.github/`) — it won't create them for you. Make
@@ -194,22 +218,34 @@ Check whether an earlier message accidentally gave it standing permission
 a bug in that skill's wording — it should ask every single time, not
 remember one "yes" as permission forever.
 
-**A skill on Claude Code ignores its own rules, but the exact same skill
-works fine on Codex.**
-This can happen if you have your own personal instructions file at
-`~/.claude/CLAUDE.md` (a global file you wrote yourself, separate from this
-repo). If those personal instructions give the AI a different job — for
-example, telling it to always give advice and ask discussion questions
-before doing anything — they can sometimes win out over a skill's own
-instructions, especially on a request that sounds like it needs a judgment
-call. We saw this happen for real: a router skill was asked a genuinely
-tricky question, and instead of following its own "state the mix-up, ask
-which one" rule, it answered as a general advisor instead, because that's
-what a personal `CLAUDE.md` file told it to prioritize. Codex doesn't read
-that file at all, so the same test passed cleanly there. If a skill seems to
-"forget" its own rules only on Claude Code, check whether you have a
-personal `CLAUDE.md` with instructions that could be pulling it in a
-different direction, before assuming the skill itself is broken.
+**A skill ignores its own rules, or a Codex answer comes wrapped in
+unrelated headers.**
+This can happen if you have your own personal instructions file —
+`~/.claude/CLAUDE.md` for Claude Code, or `~/.codex/AGENTS.md` for Codex (a
+global file you wrote yourself, separate from this repo). If those personal
+instructions give the AI a different job — for example, telling it to
+always give advice and ask discussion questions before doing anything —
+they can win out over a skill's own instructions, especially on a request
+that sounds like it needs a judgment call. We saw this happen for real: on
+Claude Code, a router skill was asked a genuinely tricky question, and
+instead of following its own "state the mix-up, ask which one" rule, it
+answered as a general advisor instead, because that's what a personal
+`CLAUDE.md` file told it to prioritize. Codex has the same kind of
+competing file at `~/.codex/AGENTS.md`; in our testing it never changed
+Codex's actual answer or skipped an approval step, but it did sometimes
+wrap a correct answer in unrequested "Critique / Alternatives / Pros & Cons"
+headers from that personal file.
+
+This repo ships a project-level [`CLAUDE.md`](CLAUDE.md) and
+[`AGENTS.md`](AGENTS.md) at the repo root specifically to fix this: when you
+explicitly invoke one of this repo's skills, agents, or orchestrators, these
+files tell the tool to follow that skill's own instructions as written
+instead of layering your personal file's persona or format on top. In our
+testing this fixed the formatting bleed-through on Codex completely, and
+made the Claude Code behavior noticeably more consistent (it's still not a
+100% guarantee — if a skill still seems to "forget" its own rules, check
+your personal instructions file for something that could be pulling it in a
+different direction, before assuming the skill itself is broken).
 
 **GitHub shows a different name than what I typed for my commit.**
 If your commit's email matches a verified email on a GitHub account
